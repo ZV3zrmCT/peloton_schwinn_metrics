@@ -8,6 +8,10 @@ The Peloton web application does not display target metrics, like cadance and re
 - Live and recently added classes do not have metrics. It can take a day or more for Peloton to add metrics to a recording.
 - Metrics begin during the warmup, after the 1 minute class introduction.
 
+# What about other bikes?
+- [Echelon](https://github.com/minhur/peloton_echelon_metrics) (thanks to [Minhur](https://github.com/minhur)).
+- [Keiser](https://github.com/lioajie/pelokeiser_metrics) (thanks to [lioajie](https://github.com/lioajie)).
+
 # What's a bookmarklet?
 A bookmarklet is a bookmark stored in a web browser. Bookmarklets are unobtrusive JavaScripts stored as the URL of a bookmark in a web browser or as a hyperlink on a web page.
 

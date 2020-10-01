@@ -31,9 +31,8 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
 
     var cadResistDiv = document.createElement('div');
     cadResistDiv.id = 'cadresist';
-    // not great formatting, but forces it to sit on top of the jw player
     cadResistDiv.style = 'color:white; position:absolute; top: 5%; left:36%; margin-top: 35px';
-    cadResistDiv.innerHTML = '<div id="cadresisttxt" style="width:100%;color:white;text-align:center;">metrics during warm-up</div><div style="margin-top:10px;width:100%; height:2px; background-color:#555555"><div id="cadresistprogress" style="width:0%;transition:990ms linear;height:2px;background-color:white"></div></div>';
+    cadResistDiv.innerHTML = '<div id="cadresisttxt" style="width:100%;color:white;text-align:center;">metrics start during warmup</div><div style="margin-top:10px;width:100%; height:2px; background-color:#555555"><div id="cadresistprogress" style="width:0%;transition:990ms linear;height:2px;background-color:white"></div></div>';
     document.querySelector("div[class='jw-wrapper jw-reset']").after(cadResistDiv);
 
     var cadResisTextDiv = document.getElementById('cadresisttxt');

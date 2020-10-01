@@ -31,9 +31,9 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
 
     var cadResistDiv = document.createElement('div');
     cadResistDiv.id = 'cadresist';
-    cadResistDiv.style = 'color:white';
-    cadResistDiv.innerHTML = '<div id="cadresisttxt" style="width:100%;color:white"></div><div style="margin-top:10px;width:100%; height:2px; background-color:#555555"><div id="cadresistprogress" style="width:0%;transition:990ms linear;height:2px;background-color:white"></div></div>';
-    document.querySelector("div[data-test-id='videoSongContainer']").after(cadResistDiv);
+    cadResistDiv.style = 'color:white; position:absolute; top: 5%; left:36%; margin-top: 35px';
+    cadResistDiv.innerHTML = '<div id="cadresisttxt" style="width:100%;color:white;text-align:center;">metrics during warm-up</div><div style="margin-top:10px;width:100%; height:2px; background-color:#555555"><div id="cadresistprogress" style="width:0%;transition:990ms linear;height:2px;background-color:white"></div></div>';
+    document.querySelector("div[class='jw-wrapper jw-reset']").after(cadResistDiv);
 
     var cadResisTextDiv = document.getElementById('cadresisttxt');
     var cadResisProgressDiv = document.getElementById('cadresistprogress');
@@ -67,7 +67,8 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
     ride.instructor_cues = rideCue; //overwrite original cue data
 
     // set an observer on the timer, triggers running the code when it changes
-    var mPar = document.querySelector("div[data-test-id='video-timer']"),
+    //var mPar = document.querySelector("div[data-test-id='video-timer']"),
+    var mPar = document.querySelector("div[class='player-overlay-wrapper']"),
       options = {
         attributes: true,
         childList: true,
@@ -90,7 +91,7 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
       for (var i = 0; i < ride.instructor_cues.length; i++) {
         var cue = ride.instructor_cues[i];
         if (timecode >= Number(cue.offsets.start) && timecode <= Number(cue.offsets.end)) {
-          cadResisTextDiv.innerHTML = "cadence: " + cue.cadence_range.lower + " - " + cue.cadence_range.upper + "&nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[cue.resistance_range.lower] + " - " + schwinnResistance[cue.resistance_range.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + cue.resistance_range.lower + " - " + cue.resistance_range.upper + ")";
+          cadResisTextDiv.innerHTML = "cadence: " + cue.cadence_range.lower + " - " + cue.cadence_range.upper + " &nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[cue.resistance_range.lower] + " - " + schwinnResistance[cue.resistance_range.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + cue.resistance_range.lower + " - " + cue.resistance_range.upper + ")";
 
           if (timecode == Number(cue.offsets.start)) {
             cadResisProgressDiv.style.transition = "none";

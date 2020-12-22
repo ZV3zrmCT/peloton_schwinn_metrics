@@ -9,7 +9,7 @@ The Peloton web application does not display target metrics, like cadance and re
 - Metrics begin during the warmup, after the 1 minute class introduction.
 
 # What about other bikes?
-- [Echelon](https://github.com/minhur/peloton_echelon_metrics) (thanks to [Minhur](https://github.com/minhur)). This may not be actively maintained?
+- [Echelon](https://github.com/minhur/peloton_echelon_metrics) (thanks to [Minhur](https://github.com/minhur) and [gtitievsky]()https://githiub.com/gtitievsky). This may not be actively maintained?
 - [Keiser](https://github.com/lioajie/pelokeiser_metrics) (thanks to [lioajie](https://github.com/lioajie)).
 
 # What's a bookmarklet?

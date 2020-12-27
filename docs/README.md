@@ -9,8 +9,8 @@ The Peloton web application does not display target metrics, like cadance and re
 - Metrics begin during the warmup, after the 1 minute class introduction.
 
 # What about other bikes?
-- [Echelon] see below for a link, thanks to [gtitievsky](https://github.com/gtitievsky) for the conversion.
-- [Keiser](https://github.com/lioajie/pelokeiser_metrics) (thanks to [lioajie](https://github.com/lioajie)).
+- Echelon: see "How to Install" for a bookmarklet, thanks to [gtitievsky](https://github.com/gtitievsky) for the conversion.
+- Keiser: [pelokeiser_metrics](https://github.com/lioajie/pelokeiser_metrics) (thanks to [lioajie](https://github.com/lioajie)).
 
 # What's a bookmarklet?
 A bookmarklet is a bookmark, but has JavaScript stored as the URL. Accessing the bookmarklet will run code, rather than visiting a new web page.

@@ -23,7 +23,6 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
     return response.json()
   })
   .then(function (ride) {
-
     // schwinn mapping, values in order corresponding to peloton
     var schwinnResistance = [0,1,2,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,13,13,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,25,25,26,26,26,26,27,27,27,27,27,28,28,28,28,28,28,29,29,29,29,29,29,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,32,32,32,32,32,32,32];
 
@@ -39,7 +38,7 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
     var cadResisProgressDiv = document.getElementById('cadresistprogress');
 
     //does the class have target metrics?
-    if (!ride.instructor_cues.length) {
+    if (ride.target_metrics_data.length ) {
       cadResistDiv.innerHTML = "Class does not have target metrics.";
       setTimeout(function () {
         cadResistDiv.innerHTML = "";
@@ -47,16 +46,18 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
       return;
     }
 
+    
     // combinue consecutive cues that are the same
     //   some classes have lots of consecutive segments of only a couple seconds, but all with the same cadence/resistance 
     var rideCue = [];
-    var cue = ride.instructor_cues[0];
-    for (var i = 1; i < ride.instructor_cues.length; i++) {
-      var newCue = ride.instructor_cues[i];
-      if (cue.resistance_range.upper == newCue.resistance_range.upper &&
-        cue.resistance_range.lower == newCue.resistance_range.lower &&
-        cue.cadence_range.upper == newCue.cadence_range.upper &&
-        cue.cadence_range.lower == newCue.cadence_range.lower) {
+    //var cue = ride.instructor_cues[0];
+    var cue = ride.target_metrics_data.target_metrics[0];
+    for (var i = 1; i < ride.target_metrics_data.target_metrics.length; i++) {
+      var newCue = ride.target_metrics_data.target_metrics[i];
+      if (cue.metrics[0].upper == newCue.metrics[0].upper &&
+        cue.metrics[0].lower == newCue.metrics[0].lower &&
+        cue.metrics[1].upper == newCue.metrics[1].upper &&
+        cue.metrics[1].lower == newCue.metrics[1].lower) {
         cue.offsets.end = newCue.offsets.end;
       } else {
         rideCue.push(cue);
@@ -65,6 +66,7 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
     }
     rideCue.push(newCue);
     ride.instructor_cues = rideCue; //overwrite original cue data
+
 
     // set an observer on the timer, triggers running the code when it changes
     //var mPar = document.querySelector("div[data-test-id='video-timer']"),
@@ -88,10 +90,42 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
 
       // convert mm:ss timestamp to cue timecode in the API (seconds elapsed)
       var timecode = (classDuration - (Number(timestamp[0]) * 60 + Number(timestamp[1]))) + Number(ride.ride.pedaling_start_offset);
-      for (var i = 0; i < ride.instructor_cues.length; i++) {
-        var cue = ride.instructor_cues[i];
+
+      for (var i = 0; i < ride.target_metrics_data.target_metrics.length; i++) {
+        var cue = ride.target_metrics_data.target_metrics[i];
+
         if (timecode >= Number(cue.offsets.start) && timecode <= Number(cue.offsets.end)) {
-          cadResisTextDiv.innerHTML = "cadence: " + cue.cadence_range.lower + " - " + cue.cadence_range.upper + " &nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[cue.resistance_range.lower] + " - " + schwinnResistance[cue.resistance_range.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + cue.resistance_range.lower + " - " + cue.resistance_range.upper + ")";
+          if(cue.segment_type == 'cycling') {
+            var cadence;
+            var resistance;
+            for(var x = 0; x<cue.metrics.length; x++) { 
+              switch(cue.metrics[x].name) {
+                case 'resistance':
+                  resistance = cue.metrics[x];
+                  break;
+                case 'cadence':
+                  cadence = cue.metrics[x];
+                  break;
+              }
+            }
+            cadResisTextDiv.innerHTML = "cadence: " + cadence.lower + " - " + cadence.upper + " &nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[resistance.lower] + " - " + schwinnResistance[resistance.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + resistance.lower + " - " + resistance.upper + ")";
+          }
+
+          if(cue.segment_type == 'running') {
+            var speed;
+            var incline;
+            for(var x = 0; x<cue.metrics.length; x++) { 
+              switch(cue.metrics[x].name) {
+                case 'speed':
+                  speed = cue.metrics[x];
+                  break;
+                case 'incline':
+                  incline = cue.metrics[x];
+                  break;
+              }
+            }
+            cadResisTextDiv.innerHTML = "speed: " + speed.lower + " - " + speed.upper + " &nbsp;&nbsp;&nbsp;&nbsp; incline: " + incline.lower + " - " + incline.upper;
+          }
 
           if (timecode == Number(cue.offsets.start)) {
             cadResisProgressDiv.style.transition = "none";

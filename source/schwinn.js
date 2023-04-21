@@ -24,7 +24,9 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
   })
   .then(function (ride) {
     // schwinn mapping, values in order corresponding to peloton
-    var schwinnResistance = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 17, 19, 20, 22, 23, 25, 27, 29, 31, 33, 35, 38, 41, 43, 46, 49, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100];
+
+    //schwinn
+    var schwinnResistance = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,4,5,6,7,8,9,11,12,14,15,17,19,20,22,23,25,27,29,31,33,35,38,41,43,46,49,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100];
 
     var classDuration = Number(ride.ride.duration);
 
@@ -65,7 +67,7 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
       }
     }
     rideCue.push(newCue);
-    ride.instructor_cues = rideCue; //overwrite original cue data
+    ride.target_metrics_data.target_metrics = rideCue; //overwrite original cue data
 
 
     // set an observer on the timer, triggers running the code when it changes

@@ -25,7 +25,7 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
   .then(function (ride) {
     // schwinn mapping, values in order corresponding to peloton
 
-    //echelon
+    //schwinn
     var schwinnResistance = [0,1,2,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,13,13,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,25,25,26,26,26,26,27,27,27,27,27,28,28,28,28,28,28,29,29,29,29,29,29,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,32,32,32,32,32,32,32];
 
     var classDuration = Number(ride.ride.duration);
@@ -56,7 +56,9 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
     var cue = ride.target_metrics_data.target_metrics[0];
     for (var i = 1; i < ride.target_metrics_data.target_metrics.length; i++) {
       var newCue = ride.target_metrics_data.target_metrics[i];
-      if (cue.metrics[0].upper == newCue.metrics[0].upper &&
+      if (newCue.metrics.hasOwnProperty("upper") && newCue.metrics.hasOwnProperty("upper") &&
+        newCue.metrics.hasOwnProperty("lower") && newCue.metrics.hasOwnProperty("lower") &&
+        cue.metrics[0].upper == newCue.metrics[0].upper &&
         cue.metrics[0].lower == newCue.metrics[0].lower &&
         cue.metrics[1].upper == newCue.metrics[1].upper &&
         cue.metrics[1].lower == newCue.metrics[1].lower) {
@@ -88,7 +90,10 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
 
       // split the mm:ss timestamp from the peloton GUI
       timestamp = timestamp.innerHTML.split(":");
-      if (timestamp.length != 2) return;
+      if (timestamp.length != 2) {
+        cadResisTextDiv.innerHTML = "";
+        return;
+      }
 
       // convert mm:ss timestamp to cue timecode in the API (seconds elapsed)
       var timecode = (classDuration - (Number(timestamp[0]) * 60 + Number(timestamp[1]))) + Number(ride.ride.pedaling_start_offset);
@@ -97,38 +102,64 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
         var cue = ride.target_metrics_data.target_metrics[i];
 
         if (timecode >= Number(cue.offsets.start) && timecode <= Number(cue.offsets.end)) {
-          if(cue.segment_type == 'cycling') {
-            var cadence;
-            var resistance;
-            for(var x = 0; x<cue.metrics.length; x++) { 
-              switch(cue.metrics[x].name) {
-                case 'resistance':
-                  resistance = cue.metrics[x];
-                  break;
-                case 'cadence':
-                  cadence = cue.metrics[x];
-                  break;
-              }
+            switch(cue.segment_type) {
+                case 'cycling':
+                    var cadence;
+                    var resistance;
+                    for(var x = 0; x<cue.metrics.length; x++) { 
+                      switch(cue.metrics[x].name) {
+                        case 'resistance':
+                          resistance = cue.metrics[x];
+                          break;
+                        case 'cadence':
+                          cadence = cue.metrics[x];
+                          break;
+                      }
+                    }
+                    cadResisTextDiv.innerHTML = "cadence: " + cadence.lower + " - " + cadence.upper + " &nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[resistance.lower] + " - " + schwinnResistance[resistance.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + resistance.lower + " - " + resistance.upper + ")";
+          
+                    break;
+                case 'running':
+                    var speed;
+                    var incline;
+                    for(var x = 0; x<cue.metrics.length; x++) { 
+                        switch(cue.metrics[x].name) {
+                        case 'speed':
+                            speed = cue.metrics[x];
+                            break;
+                        case 'incline':
+                            incline = cue.metrics[x];
+                            break;
+                        }
+                    }
+                    cadResisTextDiv.innerHTML = "speed: " + speed.lower + " - " + speed.upper + " &nbsp;&nbsp;&nbsp;&nbsp; incline: " + incline.lower + " - " + incline.upper;
+                
+                    break;
+                    
+                case 'caesar':
+                    var stroke;
+                    var pace;
+                    for(var x = 0; x<cue.metrics.length; x++) { 
+                        switch(cue.metrics[x].name) {
+                        case 'stroke_rate':
+                            stroke = cue.metrics[x];
+                            break;
+                        case 'pace_intensity':
+                            pace = cue.metrics[x];
+                            break;
+                        }
+                    }
+                    cadResisTextDiv.innerHTML = "stroke: " + stroke.lower + " - " + stroke.upper + " &nbsp;&nbsp;&nbsp;&nbsp; pace: " + pace.lower + " - " + pace.upper;
+                
+                    break;
+                case 'free_mode':
+                    cadResisTextDiv.innerHTML = "";
+                
+                    break;
+                default:
+                    cadResisTextDiv.innerHTML = "";
             }
-            cadResisTextDiv.innerHTML = "cadence: " + cadence.lower + " - " + cadence.upper + " &nbsp;&nbsp;&nbsp;&nbsp; resistance: " + schwinnResistance[resistance.lower] + " - " + schwinnResistance[resistance.upper] + "&nbsp;&nbsp;&nbsp;&nbsp; (" + resistance.lower + " - " + resistance.upper + ")";
-          }
-
-          if(cue.segment_type == 'running') {
-            var speed;
-            var incline;
-            for(var x = 0; x<cue.metrics.length; x++) { 
-              switch(cue.metrics[x].name) {
-                case 'speed':
-                  speed = cue.metrics[x];
-                  break;
-                case 'incline':
-                  incline = cue.metrics[x];
-                  break;
-              }
-            }
-            cadResisTextDiv.innerHTML = "speed: " + speed.lower + " - " + speed.upper + " &nbsp;&nbsp;&nbsp;&nbsp; incline: " + incline.lower + " - " + incline.upper;
-          }
-
+        
           if (timecode == Number(cue.offsets.start)) {
             cadResisProgressDiv.style.transition = "none";
             cadResisProgressDiv.style.width = "0%";
@@ -138,7 +169,6 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
           }
           return;
         }
-
       }
 
     }

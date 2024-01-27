@@ -2,6 +2,14 @@
 var rideID = window.location.pathname.split("/");
 rideID = rideID[rideID.length - 1];
 
+var bearerToken;
+
+const auth0Key = Object.keys(localStorage).find(key => key.startsWith('@@auth0spajs@@'));
+if(auth0Key) {
+  const authToken = JSON.parse(window.localStorage[auth0Key]);
+  bearerToken = authToken.body.access_token;
+}
+
 // peloton doesn't respond with target metrics if credentials are not included
 fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=multichannel", {
     "headers": {
@@ -11,7 +19,8 @@ fetch("https://api.onepeloton.com/api/ride/" + rideID + "/details?stream_source=
       "sec-fetch-dest": "empty",
       "sec-fetch-mode": "cors",
       "sec-fetch-site": "same-site",
-      "x-requested-with": "XmlHttpRequest"
+      "x-requested-with": "XmlHttpRequest",
+      "Authorization": "Bearer " + bearerToken
     },
     "referrer": "https://members.onepeloton.com/classes/player/" + rideID,
     "referrerPolicy": "no-referrer-when-downgrade",

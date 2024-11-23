@@ -9,6 +9,6 @@
     "bookmarklet": "^3.0.0"
   },
   "scripts": {
-    "build": "bookmarklet source/echelon.js minified/echelon.js && bookmarklet source/schwinn_watt.js minified/schwinn_watt.js && bookmarklet source/schwinn.js minified/schwinn.js"
+    "build": "./build.sh"
   }
 }

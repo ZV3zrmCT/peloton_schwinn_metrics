@@ -1,0 +1,14 @@
+{
+  "name": "peloton_schwinn_metrics",
+  "version": "1.0.0",
+  "description": "The Peloton web application does not display target metrics, like cadance and resistance. This bookmarklet uses the Peloton web application and API to display the target metrics. Works in cycling classes only.",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {
+    "bookmarklet": "^3.0.0"
+  },
+  "scripts": {
+    "build": "bookmarklet source/echelon.js minified/echelon.js && bookmarklet source/schwinn_watt.js minified/schwinn_watt.js && bookmarklet source/schwinn.js minified/schwinn.js"
+  }
+}

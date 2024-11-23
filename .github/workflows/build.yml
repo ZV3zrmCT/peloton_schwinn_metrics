@@ -1,0 +1,34 @@
+name: "Build"
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Ensure no pending Git changes
+        run: |
+          GIT_STATUS=$(git status --porcelain)
+          if [[ -n $GIT_STATUS ]]; then
+            echo "There are pending Git changes after running the build. Did you forget to build or commit the minified .js files?"
+            echo "$GIT_STATUS"
+            exit 1
+          fi

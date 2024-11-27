@@ -4,7 +4,7 @@ rideID = rideID[rideID.length - 1];
 
 var bearerToken;
 
-const auth0Key = Object.keys(localStorage).find(key => key.startsWith('@@auth0spajs@@'));
+const auth0Key = Object.keys(localStorage).find(key => key.startsWith('@@auth0spajs@@') && key.indexOf("api.") > 0);
 if(auth0Key) {
   const authToken = JSON.parse(window.localStorage[auth0Key]);
   bearerToken = authToken.body.access_token;
